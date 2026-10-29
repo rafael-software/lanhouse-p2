@@ -109,6 +109,74 @@ void cadastrarCliente() {
     printf("\nCliente cadastrado! ID: %d\n", listaClientes[pos].idCliente);
 }
 
+// Autor: Ytallo Naldi Marteli Nakayama
+void imprimirCliente(int i) {
+    printf("ID %d | %s (%s) | %d anos | Saldo: R$ %.2f\n",
+           listaClientes[i].idCliente,
+           listaClientes[i].nome,
+           listaClientes[i].apelido,
+           listaClientes[i].idade,
+           listaClientes[i].saldoCredito);
+}
+
+// Autor: Ytallo Naldi Marteli Nakayama
+void listarClientes() {
+    int i;                  // contador do for
+    int encontrou = 0;      // 0 = ainda nao achou ninguem
+
+    printf("\n--- LISTA DE CLIENTES ---\n");
+    for (i = 0; i < totalClientes; i++) {      // passa por todos os cadastrados
+        if (listaClientes[i].ativo == 1) {     // ignora os removidos
+            imprimirCliente(i);
+            encontrou = 1;
+        }
+    }
+    if (encontrou == 0) {
+        printf("Nenhum cliente cadastrado.\n");
+    }
+}
+
+// Autor: Ytallo Naldi Marteli Nakayama
+void buscarCliente() {
+    int id;
+    int i;
+    int encontrou = 0;
+
+    printf("\nDigite o ID do cliente: ");
+    scanf("%d", &id);
+
+    for (i = 0; i < totalClientes; i++) {
+        if (listaClientes[i].idCliente == id && listaClientes[i].ativo == 1) {
+            imprimirCliente(i);
+            encontrou = 1;
+        }
+    }
+    if (encontrou == 0) {
+        printf("Cliente nao encontrado.\n");
+    }
+}
+
+// Autor: Ytallo Naldi Marteli Nakayama
+void listarOuBuscarClientes() {
+    int opcao;
+
+    printf("\n1. Listar todos\n");
+    printf("2. Buscar por ID\n");
+    printf("Escolha: ");
+    scanf("%d", &opcao);
+
+    switch (opcao) {
+        case 1:
+            listarClientes();
+            break;
+        case 2:
+            buscarCliente();
+            break;
+        default:
+            printf("\n[ERRO] Opcao invalida!\n");
+    }
+}
+
 // ----------------------------------------------------------------------------
 // MODULO 1: PERSPECTIVA DE CLIENTES
 // Autor: Ytallo Naldi Marteli Nakayama (RGM: 49282557)
@@ -129,8 +197,8 @@ void moduloClientes() {
             case 1:
                 cadastrarCliente();
                 break;
-            case 2:
-                printf("\n[Em construcao] Rotina de Busca e Listagem de Clientes...\n");
+             case 2:
+                listarOuBuscarClientes();
                 break;
             case 3:
                 printf("\n[Em construcao] Rotina de Edicao de Cliente por ID...\n");
