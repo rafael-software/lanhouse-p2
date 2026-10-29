@@ -72,6 +72,43 @@ void exibirCabecalho() {
     printf("======================================================\n");
 }
 
+// Autor: Ytallo Naldi Marteli Nakayama
+void cadastrarCliente() {
+    int pos;            // posicao onde o cliente vai ser guardado
+    int idade;          // guarda a idade digitada
+    float saldo;        // guarda o saldo digitado
+
+    if (totalClientes >= 50) {                       // vetor cheio?
+        printf("\n[ERRO] Limite de 50 clientes atingido!\n");
+        return;                                      // sai da funcao
+    }
+
+    pos = totalClientes;                             // proxima posicao livre
+
+    printf("\n--- CADASTRO DE CLIENTE ---\n");
+    printf("Nome: ");
+    scanf(" %49[^\n]", listaClientes[pos].nome);     // le o nome com espacos
+    printf("Apelido (nick): ");
+    scanf(" %29[^\n]", listaClientes[pos].apelido);  // le o apelido com espacos
+    printf("Idade: ");
+    scanf("%d", &idade);
+    printf("Saldo de credito (R$): ");
+    scanf("%f", &saldo);
+
+    if (idade <= 0 || saldo < 0) {                   // dados invalidos
+        printf("\n[ERRO] Idade deve ser maior que zero e saldo nao pode ser negativo.\n");
+        return;                                      // nao cadastra
+    }
+
+    listaClientes[pos].idCliente = pos + 1;          // ID automatico: 1, 2, 3...
+    listaClientes[pos].idade = idade;
+    listaClientes[pos].saldoCredito = saldo;
+    listaClientes[pos].ativo = 1;                    // 1 = cliente ativo
+    totalClientes++;                                 // agora tem 1 cliente a mais
+
+    printf("\nCliente cadastrado! ID: %d\n", listaClientes[pos].idCliente);
+}
+
 // ----------------------------------------------------------------------------
 // MODULO 1: PERSPECTIVA DE CLIENTES
 // Autor: Ytallo Naldi Marteli Nakayama (RGM: 49282557)
@@ -90,8 +127,7 @@ void moduloClientes() {
 
         switch (opcaoCliente) {
             case 1:
-                printf("\n[Em construcao] Rotina de Cadastro de Cliente...\n");
-                printf("Campos previstos: ID, Nome, Apelido, Idade e Saldo de Credito.\n");
+                cadastrarCliente();
                 break;
             case 2:
                 printf("\n[Em construcao] Rotina de Busca e Listagem de Clientes...\n");
