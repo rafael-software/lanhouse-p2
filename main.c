@@ -192,6 +192,91 @@ void moduloLanchonete() {
 // Autor: Rafael Almeida Araujo (RGM: 884737167)
 // ----------------------------------------------------------------------------
 
+// Grava a forma de pagamento escolhida na sessao da posicao informada.
+// Autor: Rafael Almeida Araujo
+void definirPagamento(int posicao, int opcaoPagamento) {
+    switch (opcaoPagamento) {
+        case 1:
+            strcpy(historicoSessoes[posicao].formaPagamento, "Dinheiro");
+            break;
+        case 2:
+            strcpy(historicoSessoes[posicao].formaPagamento, "Pix");
+            break;
+        case 3:
+            strcpy(historicoSessoes[posicao].formaPagamento, "Cartao");
+            break;
+        default:
+            strcpy(historicoSessoes[posicao].formaPagamento, "Nao informado");
+    }
+}
+
+// Opcao 1: registra uma nova sessao (cruza Cliente + Computador)
+// Autor: Rafael Almeida Araujo
+void registrarSessao() {
+    int idCliente, idComputador, minutos, opcaoPagamento;
+
+    // Valida o limite do vetor (so cabem 50 sessoes)
+    if (totalSessoes >= 50) {
+        printf("\n[ERRO] Limite de 50 sessoes atingido!\n");
+        return;
+    }
+
+    printf("\nID do cliente: ");
+    scanf("%d", &idCliente);
+    printf("ID do computador: ");
+    scanf("%d", &idComputador);
+    printf("Minutos usados: ");
+    scanf("%d", &minutos);
+
+    // Nao aceita valores zerados ou negativos
+    if (idCliente <= 0 || idComputador <= 0 || minutos <= 0) {
+        printf("\n[ERRO] Todos os valores precisam ser maiores que zero.\n");
+        return;
+    }
+
+    printf("Forma de pagamento (1-Dinheiro  2-Pix  3-Cartao): ");
+    scanf("%d", &opcaoPagamento);
+
+    // Preenche a proxima posicao livre do vetor
+    historicoSessoes[totalSessoes].idSessao = totalSessoes + 1;
+    historicoSessoes[totalSessoes].idCliente = idCliente;
+    historicoSessoes[totalSessoes].idComputador = idComputador;
+    historicoSessoes[totalSessoes].minutosUsados = minutos;
+    historicoSessoes[totalSessoes].valorTotal = (minutos / 60.0) * precoPorHora;
+    definirPagamento(totalSessoes, opcaoPagamento);
+    historicoSessoes[totalSessoes].ativa = 1;
+
+    printf("\nSessao %d registrada! Valor a pagar: R$ %.2f\n",
+           historicoSessoes[totalSessoes].idSessao,
+           historicoSessoes[totalSessoes].valorTotal);
+
+    totalSessoes++; // agora o vetor tem uma sessao a mais
+}
+
+// Opcao 2: lista todas as sessoes validas
+// Autor: Rafael Almeida Araujo
+void listarSessoes() {
+    int i;
+    int encontrou = 0;
+
+    printf("\n--- HISTORICO DE SESSOES ---\n");
+    for (i = 0; i < totalSessoes; i++) {
+        if (historicoSessoes[i].ativa == 1) {
+            printf("Sessao %d | Cliente %d | PC %d | %d min | R$ %.2f | %s\n",
+                   historicoSessoes[i].idSessao,
+                   historicoSessoes[i].idCliente,
+                   historicoSessoes[i].idComputador,
+                   historicoSessoes[i].minutosUsados,
+                   historicoSessoes[i].valorTotal,
+                   historicoSessoes[i].formaPagamento);
+            encontrou = 1;
+        }
+    }
+    if (encontrou == 0) {
+        printf("Nenhuma sessao registrada.\n");
+    }
+}
+
 // Submenu do Modulo 4 (chamado pelo menu principal)
 // Autor: Rafael Almeida Araujo
 void moduloSessoesRelatorios() {
@@ -211,10 +296,10 @@ void moduloSessoesRelatorios() {
 
         switch (opcaoSessao) {
             case 1:
-                printf("\n[Em construcao] Lancamento de nova sessao...\n");
+                registrarSessao();
                 break;
             case 2:
-                printf("\n[Em construcao] Listagem do historico...\n");
+                listarSessoes();
                 break;
             case 3:
                 printf("\n[Em construcao] Edicao de sessao...\n");
