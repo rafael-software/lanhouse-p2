@@ -381,6 +381,80 @@ void listarSessoes() {
     }
 }
 
+// Opcao 3: edita os minutos e a forma de pagamento de uma sessao
+// Autor: Rafael Almeida Araujo
+void editarSessao() {
+    int id, i, novosMinutos, opcaoPagamento;
+    int posicao = -1; // -1 significa "ainda nao encontrei"
+ 
+    printf("\nID da sessao a editar: ");
+    scanf("%d", &id);
+ 
+    // Procura a sessao no vetor
+    for (i = 0; i < totalSessoes; i++) {
+        if (historicoSessoes[i].idSessao == id && historicoSessoes[i].ativa == 1) {
+            posicao = i;
+        }
+    }
+ 
+    if (posicao == -1) {
+        printf("\n[ERRO] Sessao nao encontrada.\n");
+        return;
+    }
+ 
+    printf("Minutos atuais: %d. Novos minutos: ", historicoSessoes[posicao].minutosUsados);
+    scanf("%d", &novosMinutos);
+    if (novosMinutos <= 0) {
+        printf("\n[ERRO] Os minutos precisam ser maiores que zero.\n");
+        return;
+    }
+    printf("Nova forma de pagamento (1-Dinheiro  2-Pix  3-Cartao): ");
+    scanf("%d", &opcaoPagamento);
+ 
+    historicoSessoes[posicao].minutosUsados = novosMinutos;
+    historicoSessoes[posicao].valorTotal = (novosMinutos / 60.0) * precoPorHora;
+    definirPagamento(posicao, opcaoPagamento);
+ 
+    printf("\nSessao %d atualizada! Novo valor: R$ %.2f\n",
+           id, historicoSessoes[posicao].valorTotal);
+}
+ 
+// Opcao 4: estorna (cancela) uma sessao. Nao apaga do vetor, so marca ativa = 0
+// Autor: Rafael Almeida Araujo
+void removerSessao() {
+    int id, i;
+    int posicao = -1;
+ 
+    printf("\nID da sessao a estornar: ");
+    scanf("%d", &id);
+ 
+    for (i = 0; i < totalSessoes; i++) {
+        if (historicoSessoes[i].idSessao == id && historicoSessoes[i].ativa == 1) {
+            posicao = i;
+        }
+    }
+ 
+    if (posicao == -1) {
+        printf("\n[ERRO] Sessao nao encontrada.\n");
+        return;
+    }
+ 
+    historicoSessoes[posicao].ativa = 0;
+    printf("\nSessao %d estornada com sucesso.\n", id);
+}
+
+
+=== PASSO 2: TROQUE 2 LINHAS ===
+Dentro de moduloSessoesRelatorios(), no switch:
+ 
+case 3:
+  TIRE:   printf("\n[Em construcao] Edicao de sessao...\n");
+  COLOQUE: editarSessao();
+ 
+case 4:
+  TIRE:   printf("\n[Em construcao] Estorno de sessao...\n");
+  COLOQUE: removerSessao();
+
 // Submenu do Modulo 4 (chamado pelo menu principal)
 // Autor: Rafael Almeida Araujo
 void moduloSessoesRelatorios() {
