@@ -313,7 +313,197 @@ void moduloClientes() {
         }
     } while (opcaoCliente != 0);
 }        
+// Autor: Daniel Eduardo Iaramenco Chagas
+void cadastrarComputador() {
+    int i, idDigitado, existe;
+    float preco;
 
+    if (totalComputadores >= 50) {                   // vetor cheio?
+        printf("\n[ERRO] Limite de 50 computadores atingido!\n");
+        return;
+    }
+
+    printf("\nID do computador: ");
+    scanf("%d", &idDigitado);
+
+    if (idDigitado <= 0) {                           // ID precisa ser positivo
+        printf("[ERRO] O ID deve ser maior que zero.\n");
+        return;
+    }
+
+    existe = 0;                                      // 0 = ID ainda nao existe
+    for (i = 0; i < totalComputadores; i++) {
+        if (listaComputadores[i].idComputador == idDigitado) {
+            existe = 1;
+        }
+    }
+    if (existe == 1) {
+        printf("[ERRO] Ja existe um computador com esse ID!\n");
+        return;
+    }
+
+    printf("Nome da maquina (ex: PC-01): ");
+    scanf(" %19[^\n]", listaComputadores[totalComputadores].nomeMaquina);
+    printf("Jogo principal: ");
+    scanf(" %39[^\n]", listaComputadores[totalComputadores].jogoPrincipal);
+    printf("Preco da hora (R$): ");
+    scanf("%f", &preco);
+
+    if (preco <= 0) {                                // preco invalido
+        printf("[ERRO] O preco deve ser maior que zero.\n");
+        return;
+    }
+
+    listaComputadores[totalComputadores].idComputador = idDigitado;
+    listaComputadores[totalComputadores].precoHora = preco;
+    listaComputadores[totalComputadores].ocupado = 0;    // 0 = livre
+    totalComputadores++;                                 // agora tem 1 PC a mais
+
+    printf("\nComputador cadastrado com sucesso!\n");
+}
+
+// Autor: Daniel Eduardo Iaramenco Chagas
+void imprimirComputador(int i) {
+    printf("ID %d | %s | %s | R$ %.2f/h | ",
+           listaComputadores[i].idComputador,
+           listaComputadores[i].nomeMaquina,
+           listaComputadores[i].jogoPrincipal,
+           listaComputadores[i].precoHora);
+    if (listaComputadores[i].ocupado == 1) {
+        printf("Ocupado\n");
+    } else {
+        printf("Livre\n");
+    }
+}
+
+// Autor: Daniel Eduardo Iaramenco Chagas
+void listarComputadores() {
+    int i;
+
+    printf("\n--- LISTA DE COMPUTADORES ---\n");
+    if (totalComputadores == 0) {
+        printf("Nenhum computador cadastrado.\n");
+        return;
+    }
+    for (i = 0; i < totalComputadores; i++) {
+        imprimirComputador(i);
+    }
+}
+
+// Autor: Daniel Eduardo Iaramenco Chagas
+void buscarComputador() {
+    int id, i;
+    int encontrou = 0;
+
+    printf("\nDigite o ID do computador: ");
+    scanf("%d", &id);
+
+    for (i = 0; i < totalComputadores; i++) {
+        if (listaComputadores[i].idComputador == id) {
+            imprimirComputador(i);
+            encontrou = 1;
+        }
+    }
+    if (encontrou == 0) {
+        printf("Computador nao encontrado.\n");
+    }
+}
+
+// Autor: Daniel Eduardo Iaramenco Chagas
+void listarOuBuscarComputadores() {
+    int opcao;
+
+    printf("\n1. Listar todos\n");
+    printf("2. Buscar por ID\n");
+    printf("Escolha: ");
+    scanf("%d", &opcao);
+
+    switch (opcao) {
+        case 1:
+            listarComputadores();
+            break;
+        case 2:
+            buscarComputador();
+            break;
+        default:
+            printf("\n[ERRO] Opcao invalida!\n");
+    }
+}
+
+// Autor: Daniel Eduardo Iaramenco Chagas
+void editarComputador() {
+    int id, i, opcao;
+    int pos = -1;           // -1 = ainda nao achou o computador
+    float novoPreco;
+
+    printf("\nID do computador a editar: ");
+    scanf("%d", &id);
+
+    for (i = 0; i < totalComputadores; i++) {
+        if (listaComputadores[i].idComputador == id) {
+            pos = i;
+        }
+    }
+    if (pos == -1) {
+        printf("Computador nao encontrado.\n");
+        return;
+    }
+
+    printf("1. Preco da hora\n");
+    printf("2. Jogo instalado\n");
+    printf("O que deseja alterar? ");
+    scanf("%d", &opcao);
+
+    switch (opcao) {
+        case 1:
+            printf("Novo preco da hora (R$): ");
+            scanf("%f", &novoPreco);
+            if (novoPreco <= 0) {
+                printf("[ERRO] O preco deve ser maior que zero.\n");
+            } else {
+                listaComputadores[pos].precoHora = novoPreco;
+                printf("Preco atualizado!\n");
+            }
+            break;
+        case 2:
+            printf("Novo jogo: ");
+            scanf(" %39[^\n]", listaComputadores[pos].jogoPrincipal);
+            printf("Jogo atualizado!\n");
+            break;
+        default:
+            printf("[ERRO] Opcao invalida!\n");
+    }
+}
+
+// Autor: Daniel Eduardo Iaramenco Chagas
+void removerComputador() {
+    int id, i;
+    int pos = -1;
+
+    printf("\nID do computador para manutencao: ");
+    scanf("%d", &id);
+
+    for (i = 0; i < totalComputadores; i++) {
+        if (listaComputadores[i].idComputador == id) {
+            pos = i;
+        }
+    }
+    if (pos == -1) {
+        printf("Computador nao encontrado.\n");
+        return;
+    }
+    if (listaComputadores[pos].ocupado == 1) {       // nao remove PC em uso
+        printf("[ERRO] Computador ocupado, nao pode ser removido.\n");
+        return;
+    }
+
+    for (i = pos; i < totalComputadores - 1; i++) {  // puxa os proximos uma posicao
+        listaComputadores[i] = listaComputadores[i + 1];
+    }
+    totalComputadores--;                             // vetor ficou com 1 a menos
+
+    printf("Computador removido para manutencao.\n");
+}
 // ----------------------------------------------------------------------------
 // MODULO 2: PERSPECTIVA DE COMPUTADORES / BAIAS
 // Autor: Daniel Eduardo Iaramenco Chagas (RGM: 46825622)
@@ -332,16 +522,17 @@ void moduloComputadores() {
 
         switch (opcaoComputador) {
             case 1:
-                printf("\n[Em construcao] Cadastrando PC (ID, Nome, Jogo, Preco da Hora)...\n");
+                printf("\ncadastrarComputador(); Cadastrando PC (ID, Nome, Jogo, Preco da Hora)...\n");
                 break;
             case 2:
-                printf("\n[Em construcao] Listando baias livres e ocupadas...\n");
+                printf("\nlistarOuBuscarComputadores(); Listando baias livres e ocupadas...\n");
                 break;
             case 3:
-                printf("\n[Em construcao] Atualizando preco ou jogo do computador...\n");
+                printf("\neditarComputador();
+ Atualizando preco ou jogo do computador...\n");
                 break;
             case 4:
-                printf("\n[Em construcao] Retirando computador para manutencao...\n");
+                printf("\nremoverComputador(); Retirando computador para manutencao...\n");
                 break;
             case 0:
                 printf("\nRetornando ao menu principal...\n");
