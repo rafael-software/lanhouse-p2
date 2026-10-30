@@ -178,6 +178,39 @@ void listarOuBuscarClientes() {
 }
 
 // Autor: Ytallo Naldi Marteli Nakayama
+void removerCliente() {
+    int id;
+    int i;
+    int pos = -1;           // -1 = ainda nao achou o cliente
+    int confirmar;
+
+    printf("\nID do cliente a remover: ");
+    scanf("%d", &id);
+
+    for (i = 0; i < totalClientes; i++) {
+        if (listaClientes[i].idCliente == id && listaClientes[i].ativo == 1) {
+            pos = i;        // guarda onde o cliente esta
+        }
+    }
+
+    if (pos == -1) {        // ninguem foi encontrado
+        printf("Cliente nao encontrado.\n");
+        return;
+    }
+
+    imprimirCliente(pos);                        // mostra quem sera removido
+    printf("Confirma a remocao? (1-Sim  2-Nao): ");
+    scanf("%d", &confirmar);
+
+    if (confirmar == 1) {
+        listaClientes[pos].ativo = 0;            // remocao logica
+        printf("Cliente removido!\n");
+    } else {
+        printf("Remocao cancelada.\n");
+    }
+}
+
+// Autor: Ytallo Naldi Marteli Nakayama
 void editarCliente() {
     int id;
     int i;
@@ -242,6 +275,7 @@ void editarCliente() {
             printf("[ERRO] Opcao invalida!\n");
     }
 }
+
 // ----------------------------------------------------------------------------
 // MODULO 1: PERSPECTIVA DE CLIENTES
 // Autor: Ytallo Naldi Marteli Nakayama (RGM: 49282557)
@@ -262,14 +296,14 @@ void moduloClientes() {
             case 1:
                 cadastrarCliente();
                 break;
-             case 2:
+            case 2:
                 listarOuBuscarClientes();
                 break;
             case 3:
                 editarCliente();
                 break;
             case 4:
-                printf("\n[Em construcao] Rotina de Remocao de Cliente...\n");
+                removerCliente();
                 break;
             case 0:
                 printf("\nRetornando ao menu principal...\n");
@@ -278,7 +312,7 @@ void moduloClientes() {
                 printf("\n[ERRO] Opcao invalida no Modulo de Clientes!\n");
         }
     } while (opcaoCliente != 0);
-}
+}        
 
 // ----------------------------------------------------------------------------
 // MODULO 2: PERSPECTIVA DE COMPUTADORES / BAIAS
