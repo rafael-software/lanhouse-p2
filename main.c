@@ -370,17 +370,184 @@ void moduloLanchonete() {
 
         switch (opcaoProduto) {
             case 1:
-                printf("\n[Em construcao] Cadastrando produto (ID, Nome, Preco, Estoque)...\n");
-                break;
+               cadastrarProduto();
+            // Autor: Luiz Otavio Azevedo Rocha
+void cadastrarProduto() {
+    int i, idDigitado, existe;
+
+    if (totalProdutos >= 50) {
+        printf("\nLimite de 50 produtos atingido!\n");
+        return;
+    }
+
+    printf("\nID do produto: ");
+    scanf("%d", &idDigitado);
+
+    existe = 0;
+    for (i = 0; i < totalProdutos; i++) {
+        if (estoqueLanchonete[i].idProduto == idDigitado) {
+            existe = 1;
+        }
+    }
+    if (existe == 1) {
+        printf("Ja existe um produto com esse ID!\n");
+        return;
+    }
+
+    estoqueLanchonete[totalProdutos].idProduto = idDigitado;
+
+    printf("Nome do produto: ");
+    scanf(" %39[^\n]", estoqueLanchonete[totalProdutos].nomeProduto);
+
+    estoqueLanchonete[totalProdutos].precoVenda = 0;
+    while (estoqueLanchonete[totalProdutos].precoVenda <= 0) {
+        printf("Preco de venda (maior que 0): ");
+        scanf("%f", &estoqueLanchonete[totalProdutos].precoVenda);
+        if (estoqueLanchonete[totalProdutos].precoVenda <= 0) {
+            printf("Preco invalido!\n");
+        }
+    }
+
+    estoqueLanchonete[totalProdutos].quantidadeEstoque = -1;
+    while (estoqueLanchonete[totalProdutos].quantidadeEstoque < 0) {
+        printf("Quantidade em estoque (0 ou mais): ");
+        scanf("%d", &estoqueLanchonete[totalProdutos].quantidadeEstoque);
+        if (estoqueLanchonete[totalProdutos].quantidadeEstoque < 0) {
+            printf("Quantidade invalida!\n");
+        }
+    }
+
+    if (estoqueLanchonete[totalProdutos].quantidadeEstoque > 0) {
+        estoqueLanchonete[totalProdutos].disponivel = 1;
+    } else {
+        estoqueLanchonete[totalProdutos].disponivel = 0;
+    }
+
+    totalProdutos++;
+    printf("Produto cadastrado com sucesso!\n");
+}
             case 2:
-                printf("\n[Em construcao] Listando produtos em estoque...\n");
-                break;
+               listarEstoque();
+        // Autor: Luiz Otavio Azevedo Rocha
+void listarEstoque() {
+    int i;
+
+    if (totalProdutos == 0) {
+        printf("\nNenhum produto cadastrado.\n");
+        return;
+    }
+
+    printf("\n===== ESTOQUE DA LANCHONETE =====\n");
+    for (i = 0; i < totalProdutos; i++) {
+        printf("ID: %d | %s | R$ %.2f | Qtd: %d | ",
+               estoqueLanchonete[i].idProduto,
+               estoqueLanchonete[i].nomeProduto,
+               estoqueLanchonete[i].precoVenda,
+               estoqueLanchonete[i].quantidadeEstoque);
+        if (estoqueLanchonete[i].disponivel == 1) {
+            printf("Disponivel\n");
+        } else {
+            printf("Esgotado\n");
+        }
+    }
+}
             case 3:
-                printf("\n[Em construcao] Editando preco ou quantidade...\n");
-                break;
+                editarProduto();
+    // Autor: Luiz Otavio Azevedo Rocha
+void editarProduto() {
+    int i, idBusca, posicao, opcao;
+    float novoPreco;
+    int novaQtd;
+
+    printf("\nID do produto a editar: ");
+    scanf("%d", &idBusca);
+
+    posicao = -1;
+    for (i = 0; i < totalProdutos; i++) {
+        if (estoqueLanchonete[i].idProduto == idBusca) {
+            posicao = i;
+        }
+    }
+    if (posicao == -1) {
+        printf("Produto nao encontrado!\n");
+        return;
+    }
+
+    printf("1 - Editar preco\n2 - Editar quantidade\nEscolha: ");
+    scanf("%d", &opcao);
+
+    switch (opcao) {
+        case 1:
+            printf("Novo preco: ");
+            scanf("%f", &novoPreco);
+            if (novoPreco > 0) {
+                estoqueLanchonete[posicao].precoVenda = novoPreco;
+                printf("Preco atualizado!\n");
+            } else {
+                printf("Preco invalido!\n");
+            }
+            break;
+        case 2:
+            printf("Nova quantidade: ");
+            scanf("%d", &novaQtd);
+            if (novaQtd >= 0) {
+                estoqueLanchonete[posicao].quantidadeEstoque = novaQtd;
+                if (novaQtd > 0) {
+                    estoqueLanchonete[posicao].disponivel = 1;
+                } else {
+                    estoqueLanchonete[posicao].disponivel = 0;
+                }
+                printf("Quantidade atualizada!\n");
+            } else {
+                printf("Quantidade invalida!\n");
+            }
+            break;
+        default:
+            printf("Opcao invalida!\n");
+    }
+}
             case 4:
-                printf("\n[Em construcao] Baixa de produto vencido ou esgotado...\n");
-                break;
+              darBaixaProduto();
+// Autor: Luiz Otavio Azevedo Rocha
+void darBaixaProduto() {
+    int i, idBusca, posicao, qtdBaixa;
+
+    printf("\nID do produto para dar baixa: ");
+    scanf("%d", &idBusca);
+
+    posicao = -1;
+    for (i = 0; i < totalProdutos; i++) {
+        if (estoqueLanchonete[i].idProduto == idBusca) {
+            posicao = i;
+        }
+    }
+    if (posicao == -1) {
+        printf("Produto nao encontrado!\n");
+        return;
+    }
+    if (estoqueLanchonete[posicao].disponivel == 0) {
+        printf("Produto esgotado, nao ha o que dar baixa!\n");
+        return;
+    }
+
+    printf("Quantidade a dar baixa: ");
+    scanf("%d", &qtdBaixa);
+
+    if (qtdBaixa <= 0) {
+        printf("Quantidade invalida!\n");
+    } else if (qtdBaixa > estoqueLanchonete[posicao].quantidadeEstoque) {
+        printf("Estoque insuficiente! Disponivel: %d\n",
+               estoqueLanchonete[posicao].quantidadeEstoque);
+    } else {
+        estoqueLanchonete[posicao].quantidadeEstoque -= qtdBaixa;
+        if (estoqueLanchonete[posicao].quantidadeEstoque == 0) {
+            estoqueLanchonete[posicao].disponivel = 0;
+            printf("Baixa realizada. Produto agora ESGOTADO.\n");
+        } else {
+            printf("Baixa realizada com sucesso!\n");
+        }
+    }
+}
             case 0:
                 printf("\nRetornando ao menu principal...\n");
                 break;
