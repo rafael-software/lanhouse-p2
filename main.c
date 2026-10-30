@@ -508,17 +508,110 @@ void removerSessao() {
     printf("\nSessao %d estornada com sucesso.\n", id);
 }
 
-
-=== PASSO 2: TROQUE 2 LINHAS ===
-Dentro de moduloSessoesRelatorios(), no switch:
+// Opcao 5 [RELATORIO]: computador com mais minutos de uso
+// Autor: Rafael Almeida Araujo
+void relatorioComputadorMaisUsado() {
+    int i, j, somaMinutos;
+    int maiorSoma = 0;
+    int pcMaisUsado = 0; // 0 = nenhum encontrado ainda
  
-case 3:
-  TIRE:   printf("\n[Em construcao] Edicao de sessao...\n");
-  COLOQUE: editarSessao();
+    for (i = 0; i < totalSessoes; i++) {
+        if (historicoSessoes[i].ativa == 1) {
+            // Soma todos os minutos do mesmo PC da sessao i
+            somaMinutos = 0;
+            for (j = 0; j < totalSessoes; j++) {
+                if (historicoSessoes[j].ativa == 1 &&
+                    historicoSessoes[j].idComputador == historicoSessoes[i].idComputador) {
+                    somaMinutos = somaMinutos + historicoSessoes[j].minutosUsados;
+                }
+            }
+            // Guarda o PC se ele bateu o recorde
+            if (somaMinutos > maiorSoma) {
+                maiorSoma = somaMinutos;
+                pcMaisUsado = historicoSessoes[i].idComputador;
+            }
+        }
+    }
  
-case 4:
-  TIRE:   printf("\n[Em construcao] Estorno de sessao...\n");
-  COLOQUE: removerSessao();
+    printf("\n--- RELATORIO: COMPUTADOR MAIS USADO ---\n");
+    if (pcMaisUsado == 0) {
+        printf("Nenhuma sessao registrada ainda.\n");
+    } else {
+        printf("PC %d, com %d minutos de uso (%.1f horas).\n",
+               pcMaisUsado, maiorSoma, maiorSoma / 60.0);
+    }
+}
+ 
+// Opcao 6 [RELATORIO]: cliente com mais sessoes (Cliente VIP)
+// Autor: Rafael Almeida Araujo
+void relatorioClienteVip() {
+    int i, j, contador;
+    int maiorContador = 0;
+    int clienteVip = 0;
+    float gasto;
+    float gastoVip = 0;
+ 
+    for (i = 0; i < totalSessoes; i++) {
+        if (historicoSessoes[i].ativa == 1) {
+            // Conta as sessoes e soma o gasto do mesmo cliente da sessao i
+            contador = 0;
+            gasto = 0;
+            for (j = 0; j < totalSessoes; j++) {
+                if (historicoSessoes[j].ativa == 1 &&
+                    historicoSessoes[j].idCliente == historicoSessoes[i].idCliente) {
+                    contador++;
+                    gasto = gasto + historicoSessoes[j].valorTotal;
+                }
+            }
+            if (contador > maiorContador) {
+                maiorContador = contador;
+                clienteVip = historicoSessoes[i].idCliente;
+                gastoVip = gasto;
+            }
+        }
+    }
+ 
+    printf("\n--- RELATORIO: CLIENTE VIP ---\n");
+    if (clienteVip == 0) {
+        printf("Nenhuma sessao registrada ainda.\n");
+    } else {
+        printf("Cliente %d, com %d sessoes e R$ %.2f gastos.\n",
+               clienteVip, maiorContador, gastoVip);
+    }
+}
+ 
+// Opcao 7 [RELATORIO]: todas as sessoes de um cliente especifico
+// Autor: Rafael Almeida Araujo
+void relatorioSessoesPorCliente() {
+    int id, i;
+    int quantidade = 0;
+    int totalMinutos = 0;
+    float totalGasto = 0;
+ 
+    printf("\nID do cliente: ");
+    scanf("%d", &id);
+ 
+    printf("\n--- RELATORIO: SESSOES DO CLIENTE %d ---\n", id);
+    for (i = 0; i < totalSessoes; i++) {
+        if (historicoSessoes[i].ativa == 1 && historicoSessoes[i].idCliente == id) {
+            printf("Sessao %d | PC %d | %d min | R$ %.2f\n",
+                   historicoSessoes[i].idSessao,
+                   historicoSessoes[i].idComputador,
+                   historicoSessoes[i].minutosUsados,
+                   historicoSessoes[i].valorTotal);
+            quantidade++;
+            totalMinutos = totalMinutos + historicoSessoes[i].minutosUsados;
+            totalGasto = totalGasto + historicoSessoes[i].valorTotal;
+        }
+    }
+ 
+    if (quantidade == 0) {
+        printf("Nenhuma sessao encontrada para esse cliente.\n");
+    } else {
+        printf("Total: %d sessoes, %d minutos, R$ %.2f\n",
+               quantidade, totalMinutos, totalGasto);
+    }
+}
 
 // Submenu do Modulo 4 (chamado pelo menu principal)
 // Autor: Rafael Almeida Araujo
@@ -545,19 +638,19 @@ void moduloSessoesRelatorios() {
                 listarSessoes();
                 break;
             case 3:
-                printf("\n[Em construcao] Edicao de sessao...\n");
+               editarSessao();
                 break;
             case 4:
-                printf("\n[Em construcao] Estorno de sessao...\n");
+                removerSessao();
                 break;
             case 5:
-                printf("\n[Em construcao] Relatorio do computador mais usado...\n");
+               relatorioComputadorMaisUsado();
                 break;
             case 6:
-                printf("\n[Em construcao] Relatorio do cliente VIP...\n");
+                relatorioClienteVip();
                 break;
             case 7:
-                printf("\n[Em construcao] Relatorio de sessoes por cliente...\n");
+                relatorioSessoesPorCliente();
                 break;
             case 0:
                 printf("\nRetornando ao menu principal...\n");
