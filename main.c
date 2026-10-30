@@ -177,6 +177,71 @@ void listarOuBuscarClientes() {
     }
 }
 
+// Autor: Ytallo Naldi Marteli Nakayama
+void editarCliente() {
+    int id;
+    int i;
+    int pos = -1;           // -1 = ainda nao achou o cliente
+    int opcao;
+    int idade;
+    float valor;
+
+    printf("\nID do cliente a editar: ");
+    scanf("%d", &id);
+
+    for (i = 0; i < totalClientes; i++) {
+        if (listaClientes[i].idCliente == id && listaClientes[i].ativo == 1) {
+            pos = i;        // guarda onde o cliente esta
+        }
+    }
+
+    if (pos == -1) {        // ninguem foi encontrado
+        printf("Cliente nao encontrado.\n");
+        return;
+    }
+
+    printf("1. Nome\n");
+    printf("2. Apelido\n");
+    printf("3. Idade\n");
+    printf("4. Adicionar credito\n");
+    printf("O que deseja editar? ");
+    scanf("%d", &opcao);
+
+    switch (opcao) {
+        case 1:
+            printf("Novo nome: ");
+            scanf(" %49[^\n]", listaClientes[pos].nome);
+            printf("Nome atualizado!\n");
+            break;
+        case 2:
+            printf("Novo apelido: ");
+            scanf(" %29[^\n]", listaClientes[pos].apelido);
+            printf("Apelido atualizado!\n");
+            break;
+        case 3:
+            printf("Nova idade: ");
+            scanf("%d", &idade);
+            if (idade <= 0) {
+                printf("[ERRO] Idade invalida.\n");
+            } else {
+                listaClientes[pos].idade = idade;
+                printf("Idade atualizada!\n");
+            }
+            break;
+        case 4:
+            printf("Valor a adicionar (R$): ");
+            scanf("%f", &valor);
+            if (valor <= 0) {
+                printf("[ERRO] O valor deve ser maior que zero.\n");
+            } else {
+                listaClientes[pos].saldoCredito = listaClientes[pos].saldoCredito + valor;
+                printf("Novo saldo: R$ %.2f\n", listaClientes[pos].saldoCredito);
+            }
+            break;
+        default:
+            printf("[ERRO] Opcao invalida!\n");
+    }
+}
 // ----------------------------------------------------------------------------
 // MODULO 1: PERSPECTIVA DE CLIENTES
 // Autor: Ytallo Naldi Marteli Nakayama (RGM: 49282557)
@@ -201,7 +266,7 @@ void moduloClientes() {
                 listarOuBuscarClientes();
                 break;
             case 3:
-                printf("\n[Em construcao] Rotina de Edicao de Cliente por ID...\n");
+                editarCliente();
                 break;
             case 4:
                 printf("\n[Em construcao] Rotina de Remocao de Cliente...\n");
