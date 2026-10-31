@@ -72,6 +72,11 @@ void exibirCabecalho() {
     printf("======================================================\n");
 }
 
+// ----------------------------------------------------------------------------
+// MODULO 1: PERSPECTIVA DE CLIENTES
+// Autor: Ytallo Naldi Marteli Nakayama (RGM: 49282557)
+// ----------------------------------------------------------------------------
+
 // Autor: Ytallo Naldi Marteli Nakayama
 void cadastrarCliente() {
     int pos;            // posicao onde o cliente vai ser guardado
@@ -276,10 +281,7 @@ void editarCliente() {
     }
 }
 
-// ----------------------------------------------------------------------------
-// MODULO 1: PERSPECTIVA DE CLIENTES
-// Autor: Ytallo Naldi Marteli Nakayama (RGM: 49282557)
-// ----------------------------------------------------------------------------
+// Autor: Ytallo Naldi Marteli Nakayama
 void moduloClientes() {
     int opcaoCliente;
     do {
@@ -312,7 +314,13 @@ void moduloClientes() {
                 printf("\n[ERRO] Opcao invalida no Modulo de Clientes!\n");
         }
     } while (opcaoCliente != 0);
-}        
+}
+
+// ----------------------------------------------------------------------------
+// MODULO 2: PERSPECTIVA DE COMPUTADORES / BAIAS
+// Autor: Daniel Eduardo Iaramenco Chagas (RGM: 46825622)
+// ----------------------------------------------------------------------------
+
 // Autor: Daniel Eduardo Iaramenco Chagas
 void cadastrarComputador() {
     int i, idDigitado, existe;
@@ -504,10 +512,8 @@ void removerComputador() {
 
     printf("Computador removido para manutencao.\n");
 }
-// ----------------------------------------------------------------------------
-// MODULO 2: PERSPECTIVA DE COMPUTADORES / BAIAS
-// Autor: Daniel Eduardo Iaramenco Chagas (RGM: 46825622)
-// ----------------------------------------------------------------------------
+
+// Autor: Daniel Eduardo Iaramenco Chagas
 void moduloComputadores() {
     int opcaoComputador;
     do {
@@ -522,17 +528,16 @@ void moduloComputadores() {
 
         switch (opcaoComputador) {
             case 1:
-                printf("\ncadastrarComputador(); Cadastrando PC (ID, Nome, Jogo, Preco da Hora)...\n");
+                cadastrarComputador();
                 break;
             case 2:
-                printf("\nlistarOuBuscarComputadores(); Listando baias livres e ocupadas...\n");
+                listarOuBuscarComputadores();
                 break;
             case 3:
-                printf("\neditarComputador();
- Atualizando preco ou jogo do computador...\n");
+                editarComputador();
                 break;
             case 4:
-                printf("\nremoverComputador(); Retirando computador para manutencao...\n");
+                removerComputador();
                 break;
             case 0:
                 printf("\nRetornando ao menu principal...\n");
@@ -547,22 +552,8 @@ void moduloComputadores() {
 // MODULO 3: PERSPECTIVA DA LANCHONETE (CONSUMO)
 // Autor: Luiz Otavio Azevedo Rocha (RGM: 49939921)
 // ----------------------------------------------------------------------------
-void moduloLanchonete() {
-    int opcaoProduto;
-    do {
-        printf("\n--- [MODULO 3: LANCHONETE E ESTOQUE (Integrante C)] ---\n");
-        printf("1. Cadastrar Novo Produto (salgadinho, refri...)\n");
-        printf("2. Consultar Estoque da Lanchonete\n");
-        printf("3. Atualizar Preco ou Quantidade\n");
-        printf("4. Dar Baixa / Remover Produto\n");
-        printf("0. Voltar ao Menu Principal\n");
-        printf("Escolha uma acao: ");
-        scanf("%d", &opcaoProduto);
 
-        switch (opcaoProduto) {
-            case 1:
-               cadastrarProduto();
-            // Autor: Luiz Otavio Azevedo Rocha
+// Autor: Luiz Otavio Azevedo Rocha
 void cadastrarProduto() {
     int i, idDigitado, existe;
 
@@ -617,9 +608,8 @@ void cadastrarProduto() {
     totalProdutos++;
     printf("Produto cadastrado com sucesso!\n");
 }
-            case 2:
-               listarEstoque();
-        // Autor: Luiz Otavio Azevedo Rocha
+
+// Autor: Luiz Otavio Azevedo Rocha
 void listarEstoque() {
     int i;
 
@@ -642,9 +632,8 @@ void listarEstoque() {
         }
     }
 }
-            case 3:
-                editarProduto();
-    // Autor: Luiz Otavio Azevedo Rocha
+
+// Autor: Luiz Otavio Azevedo Rocha
 void editarProduto() {
     int i, idBusca, posicao, opcao;
     float novoPreco;
@@ -697,8 +686,7 @@ void editarProduto() {
             printf("Opcao invalida!\n");
     }
 }
-            case 4:
-              darBaixaProduto();
+
 // Autor: Luiz Otavio Azevedo Rocha
 void darBaixaProduto() {
     int i, idBusca, posicao, qtdBaixa;
@@ -739,6 +727,33 @@ void darBaixaProduto() {
         }
     }
 }
+
+// Autor: Luiz Otavio Azevedo Rocha
+void moduloLanchonete() {
+    int opcaoProduto;
+    do {
+        printf("\n--- [MODULO 3: LANCHONETE E ESTOQUE (Integrante C)] ---\n");
+        printf("1. Cadastrar Novo Produto (salgadinho, refri...)\n");
+        printf("2. Consultar Estoque da Lanchonete\n");
+        printf("3. Atualizar Preco ou Quantidade\n");
+        printf("4. Dar Baixa / Remover Produto\n");
+        printf("0. Voltar ao Menu Principal\n");
+        printf("Escolha uma acao: ");
+        scanf("%d", &opcaoProduto);
+
+        switch (opcaoProduto) {
+            case 1:
+                cadastrarProduto();
+                break;
+            case 2:
+                listarEstoque();
+                break;
+            case 3:
+                editarProduto();
+                break;
+            case 4:
+                darBaixaProduto();
+                break;
             case 0:
                 printf("\nRetornando ao menu principal...\n");
                 break;
@@ -843,22 +858,22 @@ void listarSessoes() {
 void editarSessao() {
     int id, i, novosMinutos, opcaoPagamento;
     int posicao = -1; // -1 significa "ainda nao encontrei"
- 
+
     printf("\nID da sessao a editar: ");
     scanf("%d", &id);
- 
+
     // Procura a sessao no vetor
     for (i = 0; i < totalSessoes; i++) {
         if (historicoSessoes[i].idSessao == id && historicoSessoes[i].ativa == 1) {
             posicao = i;
         }
     }
- 
+
     if (posicao == -1) {
         printf("\n[ERRO] Sessao nao encontrada.\n");
         return;
     }
- 
+
     printf("Minutos atuais: %d. Novos minutos: ", historicoSessoes[posicao].minutosUsados);
     scanf("%d", &novosMinutos);
     if (novosMinutos <= 0) {
@@ -867,35 +882,35 @@ void editarSessao() {
     }
     printf("Nova forma de pagamento (1-Dinheiro  2-Pix  3-Cartao): ");
     scanf("%d", &opcaoPagamento);
- 
+
     historicoSessoes[posicao].minutosUsados = novosMinutos;
     historicoSessoes[posicao].valorTotal = (novosMinutos / 60.0) * precoPorHora;
     definirPagamento(posicao, opcaoPagamento);
- 
+
     printf("\nSessao %d atualizada! Novo valor: R$ %.2f\n",
            id, historicoSessoes[posicao].valorTotal);
 }
- 
+
 // Opcao 4: estorna (cancela) uma sessao. Nao apaga do vetor, so marca ativa = 0
 // Autor: Rafael Almeida Araujo
 void removerSessao() {
     int id, i;
     int posicao = -1;
- 
+
     printf("\nID da sessao a estornar: ");
     scanf("%d", &id);
- 
+
     for (i = 0; i < totalSessoes; i++) {
         if (historicoSessoes[i].idSessao == id && historicoSessoes[i].ativa == 1) {
             posicao = i;
         }
     }
- 
+
     if (posicao == -1) {
         printf("\n[ERRO] Sessao nao encontrada.\n");
         return;
     }
- 
+
     historicoSessoes[posicao].ativa = 0;
     printf("\nSessao %d estornada com sucesso.\n", id);
 }
@@ -906,7 +921,7 @@ void relatorioComputadorMaisUsado() {
     int i, j, somaMinutos;
     int maiorSoma = 0;
     int pcMaisUsado = 0; // 0 = nenhum encontrado ainda
- 
+
     for (i = 0; i < totalSessoes; i++) {
         if (historicoSessoes[i].ativa == 1) {
             // Soma todos os minutos do mesmo PC da sessao i
@@ -924,7 +939,7 @@ void relatorioComputadorMaisUsado() {
             }
         }
     }
- 
+
     printf("\n--- RELATORIO: COMPUTADOR MAIS USADO ---\n");
     if (pcMaisUsado == 0) {
         printf("Nenhuma sessao registrada ainda.\n");
@@ -933,7 +948,7 @@ void relatorioComputadorMaisUsado() {
                pcMaisUsado, maiorSoma, maiorSoma / 60.0);
     }
 }
- 
+
 // Opcao 6 [RELATORIO]: cliente com mais sessoes (Cliente VIP)
 // Autor: Rafael Almeida Araujo
 void relatorioClienteVip() {
@@ -942,7 +957,7 @@ void relatorioClienteVip() {
     int clienteVip = 0;
     float gasto;
     float gastoVip = 0;
- 
+
     for (i = 0; i < totalSessoes; i++) {
         if (historicoSessoes[i].ativa == 1) {
             // Conta as sessoes e soma o gasto do mesmo cliente da sessao i
@@ -962,7 +977,7 @@ void relatorioClienteVip() {
             }
         }
     }
- 
+
     printf("\n--- RELATORIO: CLIENTE VIP ---\n");
     if (clienteVip == 0) {
         printf("Nenhuma sessao registrada ainda.\n");
@@ -971,7 +986,7 @@ void relatorioClienteVip() {
                clienteVip, maiorContador, gastoVip);
     }
 }
- 
+
 // Opcao 7 [RELATORIO]: todas as sessoes de um cliente especifico
 // Autor: Rafael Almeida Araujo
 void relatorioSessoesPorCliente() {
@@ -979,10 +994,10 @@ void relatorioSessoesPorCliente() {
     int quantidade = 0;
     int totalMinutos = 0;
     float totalGasto = 0;
- 
+
     printf("\nID do cliente: ");
     scanf("%d", &id);
- 
+
     printf("\n--- RELATORIO: SESSOES DO CLIENTE %d ---\n", id);
     for (i = 0; i < totalSessoes; i++) {
         if (historicoSessoes[i].ativa == 1 && historicoSessoes[i].idCliente == id) {
@@ -996,7 +1011,7 @@ void relatorioSessoesPorCliente() {
             totalGasto = totalGasto + historicoSessoes[i].valorTotal;
         }
     }
- 
+
     if (quantidade == 0) {
         printf("Nenhuma sessao encontrada para esse cliente.\n");
     } else {
@@ -1030,13 +1045,13 @@ void moduloSessoesRelatorios() {
                 listarSessoes();
                 break;
             case 3:
-               editarSessao();
+                editarSessao();
                 break;
             case 4:
                 removerSessao();
                 break;
             case 5:
-               relatorioComputadorMaisUsado();
+                relatorioComputadorMaisUsado();
                 break;
             case 6:
                 relatorioClienteVip();
