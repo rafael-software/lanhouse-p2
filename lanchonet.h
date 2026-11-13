@@ -107,7 +107,15 @@ void listarOuBuscarProdutos() {
                    estoqueLanchonete[i].nomeProduto,
                    estoqueLanchonete[i].precoVenda,
                    estoqueLanchonete[i].quantidadeEstoque);
-            encontrou = 1// Autor: Luiz Otavio Azevedo Rocha
+            encontrou = 1;
+        }
+    }
+    if (encontrou == 0) {
+        printf("Nenhum produto encontrado.\n");
+    }
+}
+
+// Autor: Luiz Otavio Azevedo Rocha
 void editarProduto() {
     int id, i, novaQtd;
     int pos = -1;
@@ -196,12 +204,5 @@ void moduloLanchonete() {
         }
     } while (opcao != 0);
 }
-
-    }
-    if (encontrou == 0) {
-        printf("Nenhum produto encontrado.\n");
-    }
-}
-
 
 #endif
