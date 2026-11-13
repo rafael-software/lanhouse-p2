@@ -63,4 +63,62 @@ void carregarClientesCSV() {
     fclose(arq);
 }
 
+// Autor: Ytallo Naldi Marteli Nakayama
+void cadastrarCliente() {
+    int pos = totalClientes;
+
+    if (pos >= 50) {
+        printf("\n[ERRO] Limite de 50 clientes atingido!\n");
+        return;
+    }
+
+    printf("\nNome: ");
+    scanf(" %49[^\n]", listaClientes[pos].nome);
+    printf("Apelido (nick): ");
+    scanf(" %29[^\n]", listaClientes[pos].apelido);
+    printf("Idade: ");
+    scanf("%d", &listaClientes[pos].idade);
+    printf("Saldo de credito (R$): ");
+    scanf("%f", &listaClientes[pos].saldoCredito);
+
+    if (listaClientes[pos].idade <= 0 || listaClientes[pos].saldoCredito < 0) {
+        printf("\n[ERRO] Idade e saldo invalidos.\n");
+        return;
+    }
+
+    listaClientes[pos].idCliente = pos + 1;
+    listaClientes[pos].ativo = 1;
+    totalClientes++;
+    salvarClientesCSV();
+
+    printf("\nCliente cadastrado! ID: %d\n", pos + 1);
+}
+
+// Autor: Ytallo Naldi Marteli Nakayama
+void listarOuBuscarClientes() {
+    char palavra[50];
+    int i;
+    int encontrou = 0;
+
+    printf("\nParte do nome ou apelido (ou 'todos'): ");
+    scanf(" %49[^\n]", palavra);
+
+    for (i = 0; i < totalClientes; i++) {
+        if (listaClientes[i].ativo == 1 &&
+            (strcmp(palavra, "todos") == 0 ||
+             strstr(listaClientes[i].nome, palavra) != NULL ||
+             strstr(listaClientes[i].apelido, palavra) != NULL)) {
+            printf("ID %d | %s (%s) | %d anos | R$ %.2f\n",
+                   listaClientes[i].idCliente,
+                   listaClientes[i].nome,
+                   listaClientes[i].apelido,
+                   listaClientes[i].idade,
+                   listaClientes[i].saldoCredito);
+            encontrou = 1;
+        }
+    }
+    if (encontrou == 0) {
+        printf("Nenhum cliente encontrado.\n");
+    }
+}
 #endif
