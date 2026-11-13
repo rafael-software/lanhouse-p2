@@ -5,6 +5,7 @@
 #include <string.h>
 #include "clientes.h"
 #include "computadores.h"
+#include "lanchonete.h"
 
 // sessoes.h - Integrante D
 // Autor: Rafael Almeida Araujo (RGM: 884737167)
@@ -15,6 +16,8 @@ struct Sessao {
     int idComputador;      // liga com computadores.h
     int minutosUsados;
     int turno;             // 1 = Manha, 2 = Tarde, 3 = Noite
+    int idProduto;         // liga com lanchonete.h (0 = nao comprou)
+    int quantidade;
     float valorTotal;
     char formaPagamento[20];
     int ativa;             // 1 = valida, 0 = estornada
@@ -22,6 +25,13 @@ struct Sessao {
 struct Sessao historicoSessoes[50];
 int totalSessoes = 0;
 char nomeTurno[3][10] = {"Manha", "Tarde", "Noite"};
+
+// usada no ranking de clientes
+struct Ranking {
+    int idCliente;
+    int sessoes;
+    float gasto;
+};
 
 // Autor: Rafael Almeida Araujo
 void salvarSessoesCSV() {
@@ -34,12 +44,14 @@ void salvarSessoesCSV() {
         return;
     }
     for (i = 0; i < totalSessoes; i++) {
-        fprintf(arq, "%d;%d;%d;%d;%d;%.2f;%s;%d\n",
+        fprintf(arq, "%d;%d;%d;%d;%d;%d;%d;%.2f;%s;%d\n",
                 historicoSessoes[i].idSessao,
                 historicoSessoes[i].idCliente,
                 historicoSessoes[i].idComputador,
                 historicoSessoes[i].minutosUsados,
                 historicoSessoes[i].turno,
+                historicoSessoes[i].idProduto,
+                historicoSessoes[i].quantidade,
                 historicoSessoes[i].valorTotal,
                 historicoSessoes[i].formaPagamento,
                 historicoSessoes[i].ativa);
@@ -56,17 +68,19 @@ void carregarSessoesCSV() {
         return;
     }
     totalSessoes = 0;
-    // fscanf devolve quantos campos leu (8 = linha completa)
+    // fscanf devolve quantos campos leu (10 = linha completa)
     while (totalSessoes < 50 &&
-           fscanf(arq, "%d;%d;%d;%d;%d;%f;%19[^;];%d\n",
+           fscanf(arq, "%d;%d;%d;%d;%d;%d;%d;%f;%19[^;];%d\n",
                   &historicoSessoes[totalSessoes].idSessao,
                   &historicoSessoes[totalSessoes].idCliente,
                   &historicoSessoes[totalSessoes].idComputador,
                   &historicoSessoes[totalSessoes].minutosUsados,
                   &historicoSessoes[totalSessoes].turno,
+                  &historicoSessoes[totalSessoes].idProduto,
+                  &historicoSessoes[totalSessoes].quantidade,
                   &historicoSessoes[totalSessoes].valorTotal,
                   historicoSessoes[totalSessoes].formaPagamento,
-                  &historicoSessoes[totalSessoes].ativa) == 8) {
+                  &historicoSessoes[totalSessoes].ativa) == 10) {
         totalSessoes++;
     }
     fclose(arq);
@@ -100,10 +114,24 @@ int acharComputador(int id) {
     return pos;
 }
 
+// devolve a posicao do produto no vetor, ou -1 se nao achar
+// Autor: Rafael Almeida Araujo
+int acharProduto(int id) {
+    int i;
+    int pos = -1;
+
+    for (i = 0; i < totalProdutos; i++) {
+        if (estoqueLanchonete[i].idProduto == id) {
+            pos = i;
+        }
+    }
+    return pos;
+}
+
 // Autor: Rafael Almeida Araujo
 void registrarSessao() {
     int pos = totalSessoes;
-    int posC, posP;
+    int posC, posP, posL;
 
     if (pos >= 50) {
         printf("\n[ERRO] Limite de 50 sessoes atingido!\n");
@@ -118,6 +146,13 @@ void registrarSessao() {
     scanf("%d", &historicoSessoes[pos].minutosUsados);
     printf("Turno (1-Manha  2-Tarde  3-Noite): ");
     scanf("%d", &historicoSessoes[pos].turno);
+    printf("ID do produto da lanchonete (0 = nenhum): ");
+    scanf("%d", &historicoSessoes[pos].idProduto);
+    historicoSessoes[pos].quantidade = 0;
+    if (historicoSessoes[pos].idProduto != 0) {
+        printf("Quantidade: ");
+        scanf("%d", &historicoSessoes[pos].quantidade);
+    }
     printf("Forma de pagamento (Dinheiro, Pix ou Cartao): ");
     scanf(" %19[^\n]", historicoSessoes[pos].formaPagamento);
 
@@ -134,9 +169,26 @@ void registrarSessao() {
         return;
     }
 
-    historicoSessoes[pos].idSessao = pos + 1;
     historicoSessoes[pos].valorTotal =
         (historicoSessoes[pos].minutosUsados / 60.0) * listaComputadores[posP].precoHora;
+
+    // cruzamento com a lanchonete: confere o produto e abate o estoque
+    if (historicoSessoes[pos].idProduto != 0) {
+        posL = acharProduto(historicoSessoes[pos].idProduto);
+        if (posL == -1 || estoqueLanchonete[posL].disponivel == 0 ||
+            historicoSessoes[pos].quantidade <= 0 ||
+            historicoSessoes[pos].quantidade > estoqueLanchonete[posL].quantidadeEstoque) {
+            printf("\n[ERRO] Produto invalido ou estoque insuficiente.\n");
+            return;
+        }
+        estoqueLanchonete[posL].quantidadeEstoque =
+            estoqueLanchonete[posL].quantidadeEstoque - historicoSessoes[pos].quantidade;
+        historicoSessoes[pos].valorTotal = historicoSessoes[pos].valorTotal +
+            historicoSessoes[pos].quantidade * estoqueLanchonete[posL].precoVenda;
+        salvarProdutosCSV();
+    }
+
+    historicoSessoes[pos].idSessao = pos + 1;
     historicoSessoes[pos].ativa = 1;
     totalSessoes++;
     salvarSessoesCSV();
@@ -177,7 +229,7 @@ void listarOuBuscarSessoes() {
 
 // Autor: Rafael Almeida Araujo
 void editarSessao() {
-    int id, i, minutos, posP;
+    int id, i, minutos, posP, posL;
     int pos = -1;
 
     printf("\nID da sessao a editar: ");
@@ -202,13 +254,18 @@ void editarSessao() {
 
     historicoSessoes[pos].minutosUsados = minutos;
     historicoSessoes[pos].valorTotal = (minutos / 60.0) * listaComputadores[posP].precoHora;
+    if (historicoSessoes[pos].idProduto != 0) {
+        posL = acharProduto(historicoSessoes[pos].idProduto);
+        historicoSessoes[pos].valorTotal = historicoSessoes[pos].valorTotal +
+            historicoSessoes[pos].quantidade * estoqueLanchonete[posL].precoVenda;
+    }
     salvarSessoesCSV();
     printf("Sessao atualizada! Novo valor: R$ %.2f\n", historicoSessoes[pos].valorTotal);
 }
 
 // Autor: Rafael Almeida Araujo
 void removerSessao() {
-    int id, i;
+    int id, i, posL;
     int pos = -1;
 
     printf("\nID da sessao a estornar: ");
@@ -221,6 +278,16 @@ void removerSessao() {
     if (pos == -1) {
         printf("Sessao nao encontrada.\n");
         return;
+    }
+
+    // devolve ao estoque o que a sessao consumiu
+    if (historicoSessoes[pos].idProduto != 0) {
+        posL = acharProduto(historicoSessoes[pos].idProduto);
+        if (posL != -1) {
+            estoqueLanchonete[posL].quantidadeEstoque =
+                estoqueLanchonete[posL].quantidadeEstoque + historicoSessoes[pos].quantidade;
+            salvarProdutosCSV();
+        }
     }
 
     historicoSessoes[pos].ativa = 0;
@@ -332,6 +399,50 @@ void relatorioMatrizUso() {
     }
 }
 
+// ordena os clientes pelo gasto total (Bubble Sort, maior primeiro)
+// Autor: Rafael Almeida Araujo
+void relatorioRankingClientes() {
+    struct Ranking lista[50];
+    struct Ranking troca;
+    int i, j, k;
+    int total = 0;
+
+    for (i = 0; i < totalClientes; i++) {
+        if (listaClientes[i].ativo == 1) {
+            lista[total].sessoes = 0;
+            lista[total].gasto = 0;
+            lista[total].idCliente = listaClientes[i].idCliente;
+            for (k = 0; k < totalSessoes; k++) {
+                if (historicoSessoes[k].ativa == 1 &&
+                    historicoSessoes[k].idCliente == listaClientes[i].idCliente) {
+                    lista[total].sessoes++;
+                    lista[total].gasto = lista[total].gasto + historicoSessoes[k].valorTotal;
+                }
+            }
+            total++;
+        }
+    }
+
+    for (i = 0; i < total - 1; i++) {
+        for (j = 0; j < total - 1 - i; j++) {
+            if (lista[j].gasto < lista[j + 1].gasto) {
+                troca = lista[j];
+                lista[j] = lista[j + 1];
+                lista[j + 1] = troca;
+            }
+        }
+    }
+
+    printf("\n--- RELATORIO: RANKING DE CLIENTES POR GASTO ---\n");
+    if (total == 0) {
+        printf("Nenhum cliente cadastrado.\n");
+    }
+    for (i = 0; i < total; i++) {
+        k = acharCliente(lista[i].idCliente);
+        printf("%d. %s - %d sessoes, R$ %.2f\n", i + 1, listaClientes[k].nome, lista[i].sessoes, lista[i].gasto);
+    }
+}
+
 // Autor: Rafael Almeida Araujo
 void moduloSessoesRelatorios() {
     int opcao;
@@ -344,6 +455,7 @@ void moduloSessoesRelatorios() {
         printf("5. [RELATORIO] Computador Mais Usado\n");
         printf("6. [RELATORIO] Cliente VIP\n");
         printf("7. [RELATORIO] Uso por PC e Turno (matriz)\n");
+        printf("8. [RELATORIO] Ranking de Clientes por Gasto\n");
         printf("0. Voltar ao Menu Principal\n");
         printf("Escolha uma acao: ");
         scanf("%d", &opcao);
@@ -370,6 +482,9 @@ void moduloSessoesRelatorios() {
             case 7:
                 relatorioMatrizUso();
                 break;
+            case 8:
+                relatorioRankingClientes();
+                break;
             case 0:
                 printf("\nRetornando ao menu principal...\n");
                 break;
@@ -378,4 +493,5 @@ void moduloSessoesRelatorios() {
         }
     } while (opcao != 0);
 }
+
 #endif
