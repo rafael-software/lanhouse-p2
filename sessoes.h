@@ -174,4 +174,58 @@ void listarOuBuscarSessoes() {
         printf("Nenhuma sessao encontrada.\n");
     }
 }
+
+// Autor: Rafael Almeida Araujo
+void editarSessao() {
+    int id, i, minutos, posP;
+    int pos = -1;
+
+    printf("\nID da sessao a editar: ");
+    scanf("%d", &id);
+    for (i = 0; i < totalSessoes; i++) {
+        if (historicoSessoes[i].idSessao == id && historicoSessoes[i].ativa == 1) {
+            pos = i;
+        }
+    }
+    if (pos == -1) {
+        printf("Sessao nao encontrada.\n");
+        return;
+    }
+
+    printf("Novos minutos: ");
+    scanf("%d", &minutos);
+    posP = acharComputador(historicoSessoes[pos].idComputador);
+    if (minutos <= 0 || posP == -1) {
+        printf("[ERRO] Dados invalidos.\n");
+        return;
+    }
+
+    historicoSessoes[pos].minutosUsados = minutos;
+    historicoSessoes[pos].valorTotal = (minutos / 60.0) * listaComputadores[posP].precoHora;
+    salvarSessoesCSV();
+    printf("Sessao atualizada! Novo valor: R$ %.2f\n", historicoSessoes[pos].valorTotal);
+}
+
+// Autor: Rafael Almeida Araujo
+void removerSessao() {
+    int id, i;
+    int pos = -1;
+
+    printf("\nID da sessao a estornar: ");
+    scanf("%d", &id);
+    for (i = 0; i < totalSessoes; i++) {
+        if (historicoSessoes[i].idSessao == id && historicoSessoes[i].ativa == 1) {
+            pos = i;
+        }
+    }
+    if (pos == -1) {
+        printf("Sessao nao encontrada.\n");
+        return;
+    }
+
+    historicoSessoes[pos].ativa = 0;
+    salvarSessoesCSV();
+    printf("Sessao estornada!\n");
+}
+
 #endif
