@@ -59,5 +59,61 @@ void carregarComputadoresCSV() {
     }
     fclose(arq);
 }
+// Autor: Daniel Eduardo Iaramenco Chagas
+void cadastrarComputador() {
+    int pos = totalComputadores;
+
+    if (pos >= 50) {
+        printf("\n[ERRO] Limite de 50 computadores atingido!\n");
+        return;
+    }
+
+    printf("\nNome da maquina (ex: PC-01): ");
+    scanf(" %19[^\n]", listaComputadores[pos].nomeMaquina);
+    printf("Jogo principal: ");
+    scanf(" %39[^\n]", listaComputadores[pos].jogoPrincipal);
+    printf("Preco da hora (R$): ");
+    scanf("%f", &listaComputadores[pos].precoHora);
+
+    if (listaComputadores[pos].precoHora <= 0) {
+        printf("\n[ERRO] O preco deve ser maior que zero.\n");
+        return;
+    }
+
+    listaComputadores[pos].idComputador = pos + 1;
+    listaComputadores[pos].ativo = 1;
+    totalComputadores++;
+    salvarComputadoresCSV();
+
+    printf("\nComputador cadastrado! ID: %d\n", pos + 1);
+}
+
+// Autor: Daniel Eduardo Iaramenco Chagas
+void listarOuBuscarComputadores() {
+    char palavra[40];
+    int i;
+    int encontrou = 0;
+
+    printf("\nParte do nome da maquina ou do jogo (ou 'todos'): ");
+    scanf(" %39[^\n]", palavra);
+
+    for (i = 0; i < totalComputadores; i++) {
+        if (listaComputadores[i].ativo == 1 &&
+            (strcmp(palavra, "todos") == 0 ||
+             strstr(listaComputadores[i].nomeMaquina, palavra) != NULL ||
+             strstr(listaComputadores[i].jogoPrincipal, palavra) != NULL)) {
+            printf("ID %d | %s | %s | R$ %.2f/h\n",
+                   listaComputadores[i].idComputador,
+                   listaComputadores[i].nomeMaquina,
+                   listaComputadores[i].jogoPrincipal,
+                   listaComputadores[i].precoHora);
+            encontrou = 1;
+        }
+    }
+    if (encontrou == 0) {
+        printf("Nenhum computador encontrado.\n");
+    }
+}
+
 
 #endif
