@@ -72,4 +72,106 @@ void carregarSessoesCSV() {
     fclose(arq);
 }
 
+// devolve a posicao do cliente no vetor, ou -1 se nao achar
+// Autor: Rafael Almeida Araujo
+int acharCliente(int id) {
+    int i;
+    int pos = -1;
+
+    for (i = 0; i < totalClientes; i++) {
+        if (listaClientes[i].idCliente == id) {
+            pos = i;
+        }
+    }
+    return pos;
+}
+
+// devolve a posicao do computador no vetor, ou -1 se nao achar
+// Autor: Rafael Almeida Araujo
+int acharComputador(int id) {
+    int i;
+    int pos = -1;
+
+    for (i = 0; i < totalComputadores; i++) {
+        if (listaComputadores[i].idComputador == id) {
+            pos = i;
+        }
+    }
+    return pos;
+}
+
+// Autor: Rafael Almeida Araujo
+void registrarSessao() {
+    int pos = totalSessoes;
+    int posC, posP;
+
+    if (pos >= 50) {
+        printf("\n[ERRO] Limite de 50 sessoes atingido!\n");
+        return;
+    }
+
+    printf("\nID do cliente: ");
+    scanf("%d", &historicoSessoes[pos].idCliente);
+    printf("ID do computador: ");
+    scanf("%d", &historicoSessoes[pos].idComputador);
+    printf("Minutos usados: ");
+    scanf("%d", &historicoSessoes[pos].minutosUsados);
+    printf("Turno (1-Manha  2-Tarde  3-Noite): ");
+    scanf("%d", &historicoSessoes[pos].turno);
+    printf("Forma de pagamento (Dinheiro, Pix ou Cartao): ");
+    scanf(" %19[^\n]", historicoSessoes[pos].formaPagamento);
+
+    posC = acharCliente(historicoSessoes[pos].idCliente);
+    posP = acharComputador(historicoSessoes[pos].idComputador);
+    if (posC == -1 || posP == -1 ||
+        listaClientes[posC].ativo == 0 || listaComputadores[posP].ativo == 0) {
+        printf("\n[ERRO] Cliente ou computador invalido.\n");
+        return;
+    }
+    if (historicoSessoes[pos].minutosUsados <= 0 ||
+        historicoSessoes[pos].turno < 1 || historicoSessoes[pos].turno > 3) {
+        printf("\n[ERRO] Minutos ou turno invalido.\n");
+        return;
+    }
+
+    historicoSessoes[pos].idSessao = pos + 1;
+    historicoSessoes[pos].valorTotal =
+        (historicoSessoes[pos].minutosUsados / 60.0) * listaComputadores[posP].precoHora;
+    historicoSessoes[pos].ativa = 1;
+    totalSessoes++;
+    salvarSessoesCSV();
+
+    printf("\nSessao %d registrada! Valor: R$ %.2f\n", pos + 1, historicoSessoes[pos].valorTotal);
+}
+
+// Autor: Rafael Almeida Araujo
+void listarOuBuscarSessoes() {
+    char palavra[50];
+    int i, posC, posP;
+    int encontrou = 0;
+
+    printf("\nParte do nome do cliente (ou 'todos'): ");
+    scanf(" %49[^\n]", palavra);
+
+    for (i = 0; i < totalSessoes; i++) {
+        posC = acharCliente(historicoSessoes[i].idCliente);
+        posP = acharComputador(historicoSessoes[i].idComputador);
+        if (historicoSessoes[i].ativa == 1 && posC != -1 && posP != -1 &&
+            (strcmp(palavra, "todos") == 0 ||
+             strstr(listaClientes[posC].nome, palavra) != NULL)) {
+            printf("Sessao %d | %s | %s | %d min | %s | R$ %.2f | %s\n",
+                   historicoSessoes[i].idSessao,
+                   listaClientes[posC].nome,
+                   listaComputadores[posP].nomeMaquina,
+                   historicoSessoes[i].minutosUsados,
+                   nomeTurno[historicoSessoes[i].turno - 1],
+                   historicoSessoes[i].valorTotal,
+                   historicoSessoes[i].formaPagamento);
+            encontrou = 1;
+        }
+    }
+    if (encontrou == 0) {
+        printf("Nenhuma sessao encontrada.\n");
+    }
+}
 #endif
