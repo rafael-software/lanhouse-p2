@@ -114,6 +114,93 @@ void listarOuBuscarComputadores() {
         printf("Nenhum computador encontrado.\n");
     }
 }
+// Autor: Daniel Eduardo Iaramenco Chagas
+void editarComputador() {
+    int id, i;
+    int pos = -1;
+    float novoPreco;
 
+    printf("\nID do computador a editar: ");
+    scanf("%d", &id);
+    for (i = 0; i < totalComputadores; i++) {
+        if (listaComputadores[i].idComputador == id && listaComputadores[i].ativo == 1) {
+            pos = i;
+        }
+    }
+    if (pos == -1) {
+        printf("Computador nao encontrado.\n");
+        return;
+    }
+
+    printf("Novo preco da hora (R$): ");
+    scanf("%f", &novoPreco);
+    if (novoPreco <= 0) {
+        printf("[ERRO] O preco deve ser maior que zero.\n");
+        return;
+    }
+    printf("Novo jogo principal: ");
+    scanf(" %39[^\n]", listaComputadores[pos].jogoPrincipal);
+
+    listaComputadores[pos].precoHora = novoPreco;
+    salvarComputadoresCSV();
+    printf("Computador atualizado!\n");
+}
+
+// Autor: Daniel Eduardo Iaramenco Chagas
+void removerComputador() {
+    int id, i;
+    int pos = -1;
+
+    printf("\nID do computador para manutencao: ");
+    scanf("%d", &id);
+    for (i = 0; i < totalComputadores; i++) {
+        if (listaComputadores[i].idComputador == id && listaComputadores[i].ativo == 1) {
+            pos = i;
+        }
+    }
+    if (pos == -1) {
+        printf("Computador nao encontrado.\n");
+        return;
+    }
+
+    listaComputadores[pos].ativo = 0;
+    salvarComputadoresCSV();
+    printf("Computador removido!\n");
+}
+
+// Autor: Daniel Eduardo Iaramenco Chagas
+void moduloComputadores() {
+    int opcao;
+    do {
+        printf("\n--- [MODULO 2: COMPUTADORES E BAIAS (Integrante B)] ---\n");
+        printf("1. Cadastrar Novo Computador\n");
+        printf("2. Listar / Buscar Computadores\n");
+        printf("3. Editar Preco e Jogo\n");
+        printf("4. Remover Computador (manutencao)\n");
+        printf("0. Voltar ao Menu Principal\n");
+        printf("Escolha uma acao: ");
+        scanf("%d", &opcao);
+
+        switch (opcao) {
+            case 1:
+                cadastrarComputador();
+                break;
+            case 2:
+                listarOuBuscarComputadores();
+                break;
+            case 3:
+                editarComputador();
+                break;
+            case 4:
+                removerComputador();
+                break;
+            case 0:
+                printf("\nRetornando ao menu principal...\n");
+                break;
+            default:
+                printf("\n[ERRO] Opcao invalida!\n");
+        }
+    } while (opcao != 0);
+}
 
 #endif
