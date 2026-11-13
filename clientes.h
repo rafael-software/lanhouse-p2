@@ -121,4 +121,92 @@ void listarOuBuscarClientes() {
         printf("Nenhum cliente encontrado.\n");
     }
 }
+// Autor: Ytallo Naldi Marteli Nakayama
+void editarCliente() {
+    int id, i;
+    int pos = -1;
+    float credito;
+
+    printf("\nID do cliente a editar: ");
+    scanf("%d", &id);
+    for (i = 0; i < totalClientes; i++) {
+        if (listaClientes[i].idCliente == id && listaClientes[i].ativo == 1) {
+            pos = i;
+        }
+    }
+    if (pos == -1) {
+        printf("Cliente nao encontrado.\n");
+        return;
+    }
+
+    printf("Credito a adicionar (R$, 0 para nenhum): ");
+    scanf("%f", &credito);
+    if (credito < 0) {
+        printf("[ERRO] Credito invalido.\n");
+        return;
+    }
+    printf("Novo apelido: ");
+    scanf(" %29[^\n]", listaClientes[pos].apelido);
+
+    listaClientes[pos].saldoCredito = listaClientes[pos].saldoCredito + credito;
+    salvarClientesCSV();
+    printf("Cliente atualizado! Saldo: R$ %.2f\n", listaClientes[pos].saldoCredito);
+}
+
+// Autor: Ytallo Naldi Marteli Nakayama
+void removerCliente() {
+    int id, i;
+    int pos = -1;
+
+    printf("\nID do cliente a remover: ");
+    scanf("%d", &id);
+    for (i = 0; i < totalClientes; i++) {
+        if (listaClientes[i].idCliente == id && listaClientes[i].ativo == 1) {
+            pos = i;
+        }
+    }
+    if (pos == -1) {
+        printf("Cliente nao encontrado.\n");
+        return;
+    }
+
+    listaClientes[pos].ativo = 0;
+    salvarClientesCSV();
+    printf("Cliente removido!\n");
+}
+
+// Autor: Ytallo Naldi Marteli Nakayama
+void moduloClientes() {
+    int opcao;
+    do {
+        printf("\n--- [MODULO 1: GESTAO DE CLIENTES (Integrante A)] ---\n");
+        printf("1. Cadastrar Novo Cliente\n");
+        printf("2. Listar / Buscar Clientes\n");
+        printf("3. Editar Cliente\n");
+        printf("4. Remover Cliente\n");
+        printf("0. Voltar ao Menu Principal\n");
+        printf("Escolha uma acao: ");
+        scanf("%d", &opcao);
+
+        switch (opcao) {
+            case 1:
+                cadastrarCliente();
+                break;
+            case 2:
+                listarOuBuscarClientes();
+                break;
+            case 3:
+                editarCliente();
+                break;
+            case 4:
+                removerCliente();
+                break;
+            case 0:
+                printf("\nRetornando ao menu principal...\n");
+                break;
+            default:
+                printf("\n[ERRO] Opcao invalida!\n");
+        }
+    } while (opcao != 0);
+}
 #endif
