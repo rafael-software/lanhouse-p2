@@ -228,4 +228,69 @@ void removerSessao() {
     printf("Sessao estornada!\n");
 }
 
+// Autor: Rafael Almeida Araujo
+void relatorioComputadorMaisUsado() {
+    int i, j, soma;
+    int maior = 0;
+    int pos = -1;
+
+    for (i = 0; i < totalComputadores; i++) {
+        soma = 0;
+        for (j = 0; j < totalSessoes; j++) {
+            if (historicoSessoes[j].ativa == 1 &&
+                historicoSessoes[j].idComputador == listaComputadores[i].idComputador) {
+                soma = soma + historicoSessoes[j].minutosUsados;
+            }
+        }
+        if (soma > maior) {
+            maior = soma;
+            pos = i;
+        }
+    }
+
+    printf("\n--- RELATORIO: COMPUTADOR MAIS USADO ---\n");
+    if (pos == -1) {
+        printf("Nenhuma sessao registrada.\n");
+    } else {
+        printf("%s (%s) - %d minutos (%.1f horas)\n",
+               listaComputadores[pos].nomeMaquina,
+               listaComputadores[pos].jogoPrincipal,
+               maior, maior / 60.0);
+    }
+}
+
+// Autor: Rafael Almeida Araujo
+void relatorioClienteVip() {
+    int i, j, contador;
+    int maior = 0;
+    int pos = -1;
+    float gasto;
+    float gastoVip = 0;
+
+    for (i = 0; i < totalClientes; i++) {
+        contador = 0;
+        gasto = 0;
+        for (j = 0; j < totalSessoes; j++) {
+            if (historicoSessoes[j].ativa == 1 &&
+                historicoSessoes[j].idCliente == listaClientes[i].idCliente) {
+                contador++;
+                gasto = gasto + historicoSessoes[j].valorTotal;
+            }
+        }
+        if (contador > maior) {
+            maior = contador;
+            pos = i;
+            gastoVip = gasto;
+        }
+    }
+
+    printf("\n--- RELATORIO: CLIENTE VIP ---\n");
+    if (pos == -1) {
+        printf("Nenhuma sessao registrada.\n");
+    } else {
+        printf("%s (%s) - %d sessoes, R$ %.2f gastos\n",
+               listaClientes[pos].nome, listaClientes[pos].apelido, maior, gastoVip);
+    }
+}
+
 #endif
