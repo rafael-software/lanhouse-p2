@@ -107,12 +107,101 @@ void listarOuBuscarProdutos() {
                    estoqueLanchonete[i].nomeProduto,
                    estoqueLanchonete[i].precoVenda,
                    estoqueLanchonete[i].quantidadeEstoque);
-            encontrou = 1;
+            encontrou = 1// Autor: Luiz Otavio Azevedo Rocha
+void editarProduto() {
+    int id, i, novaQtd;
+    int pos = -1;
+    float novoPreco;
+
+    printf("\nID do produto a editar: ");
+    scanf("%d", &id);
+    for (i = 0; i < totalProdutos; i++) {
+        if (estoqueLanchonete[i].idProduto == id && estoqueLanchonete[i].disponivel == 1) {
+            pos = i;
         }
+    }
+    if (pos == -1) {
+        printf("Produto nao encontrado.\n");
+        return;
+    }
+
+    printf("Novo preco (R$): ");
+    scanf("%f", &novoPreco);
+    printf("Nova quantidade: ");
+    scanf("%d", &novaQtd);
+    if (novoPreco <= 0 || novaQtd < 0) {
+        printf("[ERRO] Preco ou quantidade invalidos.\n");
+        return;
+    }
+
+    estoqueLanchonete[pos].precoVenda = novoPreco;
+    estoqueLanchonete[pos].quantidadeEstoque = novaQtd;
+    salvarProdutosCSV();
+    printf("Produto atualizado!\n");
+}
+
+// Autor: Luiz Otavio Azevedo Rocha
+void removerProduto() {
+    int id, i;
+    int pos = -1;
+
+    printf("\nID do produto a remover: ");
+    scanf("%d", &id);
+    for (i = 0; i < totalProdutos; i++) {
+        if (estoqueLanchonete[i].idProduto == id && estoqueLanchonete[i].disponivel == 1) {
+            pos = i;
+        }
+    }
+    if (pos == -1) {
+        printf("Produto nao encontrado.\n");
+        return;
+    }
+
+    estoqueLanchonete[pos].disponivel = 0;
+    salvarProdutosCSV();
+    printf("Produto removido!\n");
+}
+
+// Autor: Luiz Otavio Azevedo Rocha
+void moduloLanchonete() {
+    int opcao;
+    do {
+        printf("\n--- [MODULO 3: LANCHONETE E ESTOQUE (Integrante C)] ---\n");
+        printf("1. Cadastrar Novo Produto\n");
+        printf("2. Listar / Buscar Estoque\n");
+        printf("3. Editar Preco e Quantidade\n");
+        printf("4. Remover Produto\n");
+        printf("0. Voltar ao Menu Principal\n");
+        printf("Escolha uma acao: ");
+        scanf("%d", &opcao);
+
+        switch (opcao) {
+            case 1:
+                cadastrarProduto();
+                break;
+            case 2:
+                listarOuBuscarProdutos();
+                break;
+            case 3:
+                editarProduto();
+                break;
+            case 4:
+                removerProduto();
+                break;
+            case 0:
+                printf("\nRetornando ao menu principal...\n");
+                break;
+            default:
+                printf("\n[ERRO] Opcao invalida!\n");
+        }
+    } while (opcao != 0);
+}
+
     }
     if (encontrou == 0) {
         printf("Nenhum produto encontrado.\n");
     }
 }
+
 
 #endif
