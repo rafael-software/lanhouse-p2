@@ -60,4 +60,59 @@ void carregarProdutosCSV() {
     fclose(arq);
 }
 
+// Autor: Luiz Otavio Azevedo Rocha
+void cadastrarProduto() {
+    int pos = totalProdutos;
+
+    if (pos >= 50) {
+        printf("\n[ERRO] Limite de 50 produtos atingido!\n");
+        return;
+    }
+
+    printf("\nNome do produto: ");
+    scanf(" %39[^\n]", estoqueLanchonete[pos].nomeProduto);
+    printf("Preco de venda (R$): ");
+    scanf("%f", &estoqueLanchonete[pos].precoVenda);
+    printf("Quantidade em estoque: ");
+    scanf("%d", &estoqueLanchonete[pos].quantidadeEstoque);
+
+    if (estoqueLanchonete[pos].precoVenda <= 0 || estoqueLanchonete[pos].quantidadeEstoque < 0) {
+        printf("\n[ERRO] Preco ou quantidade invalidos.\n");
+        return;
+    }
+
+    estoqueLanchonete[pos].idProduto = pos + 1;
+    estoqueLanchonete[pos].disponivel = 1;
+    totalProdutos++;
+    salvarProdutosCSV();
+
+    printf("\nProduto cadastrado! ID: %d\n", pos + 1);
+}
+
+// Autor: Luiz Otavio Azevedo Rocha
+void listarOuBuscarProdutos() {
+    char palavra[40];
+    int i;
+    int encontrou = 0;
+
+    printf("\nParte do nome do produto (ou 'todos'): ");
+    scanf(" %39[^\n]", palavra);
+
+    for (i = 0; i < totalProdutos; i++) {
+        if (estoqueLanchonete[i].disponivel == 1 &&
+            (strcmp(palavra, "todos") == 0 ||
+             strstr(estoqueLanchonete[i].nomeProduto, palavra) != NULL)) {
+            printf("ID %d | %s | R$ %.2f | Qtd: %d\n",
+                   estoqueLanchonete[i].idProduto,
+                   estoqueLanchonete[i].nomeProduto,
+                   estoqueLanchonete[i].precoVenda,
+                   estoqueLanchonete[i].quantidadeEstoque);
+            encontrou = 1;
+        }
+    }
+    if (encontrou == 0) {
+        printf("Nenhum produto encontrado.\n");
+    }
+}
+
 #endif
