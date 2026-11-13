@@ -293,4 +293,89 @@ void relatorioClienteVip() {
     }
 }
 
+// matriz: linha = computador, coluna = turno, valor = minutos de uso
+// Autor: Rafael Almeida Araujo
+void relatorioMatrizUso() {
+    int mapa[50][3] = {0};
+    int totalTurno[3] = {0, 0, 0};
+    int i, j, t;
+    int maior = 0;
+    int turnoMaior = 0;
+
+    for (j = 0; j < totalSessoes; j++) {
+        i = acharComputador(historicoSessoes[j].idComputador);
+        t = historicoSessoes[j].turno - 1;
+        if (historicoSessoes[j].ativa == 1 && i != -1) {
+            mapa[i][t] = mapa[i][t] + historicoSessoes[j].minutosUsados;
+            totalTurno[t] = totalTurno[t] + historicoSessoes[j].minutosUsados;
+        }
+    }
+
+    printf("\n--- RELATORIO: MINUTOS DE USO POR PC E TURNO ---\n");
+    printf("%-12s%-8s%-8s%-8s\n", "PC", nomeTurno[0], nomeTurno[1], nomeTurno[2]);
+    for (i = 0; i < totalComputadores; i++) {
+        printf("%-12s", listaComputadores[i].nomeMaquina);
+        for (t = 0; t < 3; t++) {
+            printf("%-8d", mapa[i][t]);
+        }
+        printf("\n");
+    }
+
+    for (t = 0; t < 3; t++) {
+        if (totalTurno[t] > maior) {
+            maior = totalTurno[t];
+            turnoMaior = t;
+        }
+    }
+    if (maior > 0) {
+        printf("Turno mais movimentado: %s (%d minutos)\n", nomeTurno[turnoMaior], maior);
+    }
+}
+
+// Autor: Rafael Almeida Araujo
+void moduloSessoesRelatorios() {
+    int opcao;
+    do {
+        printf("\n--- [MODULO 4: SESSOES E RELATORIOS (Integrante D)] ---\n");
+        printf("1. Registrar Nova Sessao\n");
+        printf("2. Listar / Buscar Sessoes\n");
+        printf("3. Editar Sessao\n");
+        printf("4. Estornar Sessao\n");
+        printf("5. [RELATORIO] Computador Mais Usado\n");
+        printf("6. [RELATORIO] Cliente VIP\n");
+        printf("7. [RELATORIO] Uso por PC e Turno (matriz)\n");
+        printf("0. Voltar ao Menu Principal\n");
+        printf("Escolha uma acao: ");
+        scanf("%d", &opcao);
+
+        switch (opcao) {
+            case 1:
+                registrarSessao();
+                break;
+            case 2:
+                listarOuBuscarSessoes();
+                break;
+            case 3:
+                editarSessao();
+                break;
+            case 4:
+                removerSessao();
+                break;
+            case 5:
+                relatorioComputadorMaisUsado();
+                break;
+            case 6:
+                relatorioClienteVip();
+                break;
+            case 7:
+                relatorioMatrizUso();
+                break;
+            case 0:
+                printf("\nRetornando ao menu principal...\n");
+                break;
+            default:
+                printf("\n[ERRO] Opcao invalida!\n");
+        }
+    } while (opcao != 0);
+}
 #endif
